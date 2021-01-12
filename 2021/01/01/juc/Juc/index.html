@@ -22,23 +22,25 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="多线程进阶 &#x3D;&gt; JUC并发编程1、线程和进程进程：一个程序。一个进程往往可以包含多个线程，至少包含一个。（就绪、运行、阻塞） 线程：操作系统分配资源是以线程为单位，线程是进程的组成部分。（新生、就绪、运行、阻塞、死亡） ​    java默认有两个线程：main和GC。 ​    java真的可以开启线程么？开不了！ 1new Thread().start();   ​    start方">
+  <meta name="description" content="​        java的juc，包括java的并发编程，线程安全，java锁，包括经典的生产者&#x2F;消费者问题（传统版、juc版），常见的8种锁现象，集合安全类。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="点点丶的小破站">
-<meta property="og:url" content="http://example.com/2021/01/08/juc/Juc/index.html">
+<meta property="og:title" content="JUC">
+<meta property="og:url" content="http://example.com/2021/01/01/juc/Juc/index.html">
 <meta property="og:site_name" content="点点丶的小破站">
-<meta property="og:description" content="多线程进阶 &#x3D;&gt; JUC并发编程1、线程和进程进程：一个程序。一个进程往往可以包含多个线程，至少包含一个。（就绪、运行、阻塞） 线程：操作系统分配资源是以线程为单位，线程是进程的组成部分。（新生、就绪、运行、阻塞、死亡） ​    java默认有两个线程：main和GC。 ​    java真的可以开启线程么？开不了！ 1new Thread().start();   ​    start方">
+<meta property="og:description" content="​        java的juc，包括java的并发编程，线程安全，java锁，包括经典的生产者&#x2F;消费者问题（传统版、juc版），常见的8种锁现象，集合安全类。">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="c:/Users/YYL/AppData/Roaming/Typora/typora-user-images/image-20200707205814809.png">
 <meta property="og:image" content="c:/Users/YYL/AppData/Roaming/Typora/typora-user-images/image-20200707211313184.png">
 <meta property="og:image" content="c:/Users/YYL/AppData/Roaming/Typora/typora-user-images/image-20200707210540999.png">
-<meta property="article:published_time" content="2021-01-08T03:14:03.484Z">
-<meta property="article:modified_time" content="2020-12-14T08:42:36.375Z">
+<meta property="article:published_time" content="2021-01-01T03:20:32.000Z">
+<meta property="article:modified_time" content="2021-01-12T11:49:04.927Z">
 <meta property="article:author" content="StdYyl">
+<meta property="article:tag" content="并发编程">
+<meta property="article:tag" content="线程安全、java锁">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="c:/Users/YYL/AppData/Roaming/Typora/typora-user-images/image-20200707205814809.png">
 
-<link rel="canonical" href="http://example.com/2021/01/08/juc/Juc/">
+<link rel="canonical" href="http://example.com/2021/01/01/juc/Juc/">
 
 
 <script id="page-configurations">
@@ -51,7 +53,7 @@
   };
 </script>
 
-  <title> | 点点丶的小破站</title>
+  <title>JUC | 点点丶的小破站</title>
   
 
 
@@ -194,7 +196,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" style="border-radius: 10px;" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/08/juc/Juc/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/01/juc/Juc/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -207,7 +209,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
+          JUC
         </h1>
 
         <div class="post-meta">
@@ -217,22 +219,31 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="Created: 2021-01-08 11:14:03" itemprop="dateCreated datePublished" datetime="2021-01-08T11:14:03+08:00">2021-01-08</time>
+              <time title="Created: 2021-01-01 11:20:32" itemprop="dateCreated datePublished" datetime="2021-01-01T11:20:32+08:00">2021-01-01</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-12-14 16:42:36" itemprop="dateModified" datetime="2020-12-14T16:42:36+08:00">2020-12-14</time>
+                <time title="Modified: 2021-01-12 19:49:04" itemprop="dateModified" datetime="2021-01-12T19:49:04+08:00">2021-01-12</time>
               </span>
 
             <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-file-word-o"></i>
                 </span>
-                <span class="post-meta-item-text">本文字数：2k 字</span>
+                <span class="post-meta-item-text">本文字数：2.1k 字</span>
               </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java%E5%90%8E%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">java后端</span></a>
+                </span>
+            </span>
 
           
 
@@ -245,7 +256,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="多线程进阶-gt-JUC并发编程"><a href="#多线程进阶-gt-JUC并发编程" class="headerlink" title="多线程进阶 =&gt; JUC并发编程"></a>多线程进阶 =&gt; JUC并发编程</h1><h2 id="1、线程和进程"><a href="#1、线程和进程" class="headerlink" title="1、线程和进程"></a>1、线程和进程</h2><p>进程：一个程序。一个进程往往可以包含多个线程，至少包含一个。（就绪、运行、阻塞）</p>
+        <p>​        java的juc，包括java的并发编程，线程安全，java锁，包括经典的生产者/消费者问题（传统版、juc版），常见的8种锁现象，集合安全类。</p>
+<a id="more"></a>
+
+<h1 id="多线程进阶-gt-JUC并发编程"><a href="#多线程进阶-gt-JUC并发编程" class="headerlink" title="多线程进阶 =&gt; JUC并发编程"></a>多线程进阶 =&gt; JUC并发编程</h1><h2 id="1、线程和进程"><a href="#1、线程和进程" class="headerlink" title="1、线程和进程"></a>1、线程和进程</h2><p>进程：一个程序。一个进程往往可以包含多个线程，至少包含一个。（就绪、运行、阻塞）</p>
 <p>线程：操作系统分配资源是以线程为单位，线程是进程的组成部分。（新生、就绪、运行、阻塞、死亡）</p>
 <p>​    <strong>java默认有两个线程</strong>：main和GC。</p>
 <p>​    <strong>java真的可以开启线程么？</strong>开不了！</p>
@@ -346,6 +360,10 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag"># 并发编程</a>
+              <a href="/tags/%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E3%80%81java%E9%94%81/" rel="tag"># 线程安全、java锁</a>
+          </div>
 
         
 
@@ -353,12 +371,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/01/08/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="prev" title="">
-      <i class="fa fa-chevron-left"></i> 
+    <a href="/2021/01/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="prev" title="计算机网络">
+      <i class="fa fa-chevron-left"></i> 计算机网络
     </a></div>
       <div class="post-nav-item">
-    <a href="/2021/01/08/spring/spring+mybatis%E9%9D%A2%E8%AF%95/" rel="next" title="">
-       <i class="fa fa-chevron-right"></i>
+    <a href="/2021/01/12/spring/spring+mybatis%E9%9D%A2%E8%AF%95/" rel="next" title="spring面试（高级）">
+      spring面试（高级） <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -431,18 +449,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
