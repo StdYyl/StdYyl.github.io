@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Hello World</title>
+    <url>/2021/01/08/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>hexo测试</title>
+    <url>/2021/01/11/hexo%E6%B5%8B%E8%AF%95/</url>
+    <content><![CDATA[<p>sss</p>
+<p>哈哈，我的测试</p>
+<a id="more"></a>
+
+]]></content>
+      <categories>
+        <category>测试</category>
+      </categories>
+      <tags>
+        <tag>hexo测试！</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2021/01/08/juc/Juc/</url>
+    <content><![CDATA[<h1 id="多线程进阶-gt-JUC并发编程"><a href="#多线程进阶-gt-JUC并发编程" class="headerlink" title="多线程进阶 =&gt; JUC并发编程"></a>多线程进阶 =&gt; JUC并发编程</h1><h2 id="1、线程和进程"><a href="#1、线程和进程" class="headerlink" title="1、线程和进程"></a>1、线程和进程</h2><p>进程：一个程序。一个进程往往可以包含多个线程，至少包含一个。（就绪、运行、阻塞）</p>
+<p>线程：操作系统分配资源是以线程为单位，线程是进程的组成部分。（新生、就绪、运行、阻塞、死亡）</p>
+<p>​    <strong>java默认有两个线程</strong>：main和GC。</p>
+<p>​    <strong>java真的可以开启线程么？</strong>开不了！</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread().start();  </span><br></pre></td></tr></table></figure>
+<p>​    start方法调用了本地方法start0（底层c++写的）。java无法操作硬件，它是运行在虚拟机上的。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * This method is not invoked for the main method thread or &quot;system&quot;</span></span><br><span class="line"><span class="comment">         * group threads created/set up by the VM. Any new functionality added</span></span><br><span class="line"><span class="comment">         * to this method in the future may have to also be added to the VM.</span></span><br><span class="line"><span class="comment">         *</span></span><br><span class="line"><span class="comment">         * A zero status value corresponds to state &quot;NEW&quot;.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">if</span> (threadStatus != <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalThreadStateException();</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Notify the group that this thread is about to be started</span></span><br><span class="line"><span class="comment">         * so that it can be added to the group&#x27;s list of threads</span></span><br><span class="line"><span class="comment">         * and the group&#x27;s unstarted count can be decremented. */</span></span><br><span class="line">        group.add(<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">boolean</span> started = <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            start0();</span><br><span class="line">            started = <span class="keyword">true</span>;</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (!started) &#123;</span><br><span class="line">                    group.threadStartFailed(<span class="keyword">this</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Throwable ignore) &#123;</span><br><span class="line">                <span class="comment">/* do nothing. If start0 threw a Throwable then</span></span><br><span class="line"><span class="comment">                  it will be passed up the call stack */</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">start0</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>并发、并行</p>
+</blockquote>
+<p>​    <strong>并发：多线程操作同一资源。</strong>（CPU一核，模拟出来多条线程的方法：线程之间快速交替）<br>​    <strong>并行：多个人一起行走。</strong>（CPU多核，多个线程同时执行）</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;获取cpu的核数</span><br><span class="line">Runtime.getRuntime().availableProcessors()</span><br></pre></td></tr></table></figure>
+<p><strong>并发编程的本质</strong>：充分利用CPU的资源。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//代码中，线程默认有的</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">State</span> </span>&#123;</span><br><span class="line">       </span><br><span class="line">    	<span class="comment">//新生</span></span><br><span class="line">        NEW,</span><br><span class="line"></span><br><span class="line">       	<span class="comment">//运行</span></span><br><span class="line">        RUNNABLE,</span><br><span class="line"></span><br><span class="line">        <span class="comment">//阻塞</span></span><br><span class="line">        BLOCKED,</span><br><span class="line"></span><br><span class="line">        <span class="comment">//等待</span></span><br><span class="line">        WAITING,</span><br><span class="line"></span><br><span class="line">        <span class="comment">//超时等待</span></span><br><span class="line">        TIMED_WAITING,</span><br><span class="line"></span><br><span class="line">        <span class="comment">//终止</span></span><br><span class="line">        TERMINATED;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>wait/sleep区别</strong></p>
+</blockquote>
+<p><strong>1、来自不同的类</strong></p>
+<p>wait =&gt; Object</p>
+<p>sleep =&gt; Thread</p>
+<p><strong>2、有无释放锁</strong></p>
+<p>wait会释放锁，而sleep（睡着了）不会释放锁。</p>
+<p><strong>3、适用范围</strong></p>
+<p>sleep可以在任何地方睡</p>
+<p>wait必须在同步代码块中才能使用</p>
+<blockquote>
+<p>静态代码块（父）&gt;静态代码块（子）&gt;普通代码块（父）&gt;构造方法（父）&gt;普通代码块（子）&gt;构造方法</p>
+<p><strong>即：静态代码块&gt;普通代码块&gt;构造方法</strong></p>
+</blockquote>
+<h2 id="2、Lock锁（重点）"><a href="#2、Lock锁（重点）" class="headerlink" title="2、Lock锁（重点）"></a>2、Lock锁（重点）</h2><blockquote>
+<p><strong>传统synchronized</strong></p>
+</blockquote>
+<p><img src="C:\Users\YYL\AppData\Roaming\Typora\typora-user-images\image-20200707205814809.png" alt="image-20200707205814809"></p>
+<blockquote>
+<p><strong>JUC，lock锁</strong></p>
+</blockquote>
+<p><img src="C:\Users\YYL\AppData\Roaming\Typora\typora-user-images\image-20200707211313184.png" alt="image-20200707211313184"></p>
+<p>公平锁：十分公平，按照进入顺序先来后到</p>
+<p><strong>非公平锁：不公平，可以插队（默认非公平锁）</strong></p>
+<p><img src="C:\Users\YYL\AppData\Roaming\Typora\typora-user-images\image-20200707210540999.png" alt="image-20200707210540999"></p>
+<blockquote>
+<p><strong>synchronized与Lock锁的区别</strong></p>
+</blockquote>
+<p>1、synchronized是java内置的关键字，而lock锁是java类</p>
+<p>2、synchronized无法判断获取锁的状态，Lock可以判断是否获取到了锁。</p>
+<p>3、synchronized是全自动的，自动释放锁。而Lock锁必须手动解锁，不释放会<strong>死锁</strong>。</p>
+<p>4、synchronized 线程1（获得锁，阻塞）、线程2（等待）。而Lock锁不一定会等待下去。</p>
+<p>5、synchronized 是可重入锁，不可中断，非公平锁。Lock 可重入锁，可以判断锁，公平（ReentrantLock(true)）</p>
+<p>6、synchronized 适合锁少量的代码同步问题。Lock适合锁大量代码同步块。</p>
+<h2 id="3、生产者-消费者问题"><a href="#3、生产者-消费者问题" class="headerlink" title="3、生产者/消费者问题"></a>3、生产者/消费者问题</h2><p>1、传统生产者消费者synchronized+wait+notify</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//生产者，消费者问题</span></span><br><span class="line">        Ticket tc = <span class="keyword">new</span> Ticket();</span><br><span class="line">        <span class="keyword">new</span> Thread(()-&gt;&#123; <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                tc.sale();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;线程1&quot;</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(()-&gt;&#123; <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                tc.add();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;线程2&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Ticket</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> ticket = <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">sale</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">while</span>(ticket == <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">this</span>.wait();</span><br><span class="line">        &#125;</span><br><span class="line">        ticket--;</span><br><span class="line">        System.out.println(Thread.currentThread().getName()+<span class="string">&quot;-&gt;&quot;</span>+ticket);</span><br><span class="line">        <span class="keyword">this</span>.notify();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException</span>&#123;</span><br><span class="line">        <span class="comment">//使用if会产生虚假唤醒，当同时有多个线程同时进入时，如果此时ticket == 0 ，进入的线程都会是ticket++</span></span><br><span class="line">        <span class="keyword">while</span>(ticket != <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">this</span>.wait();</span><br><span class="line">        &#125;</span><br><span class="line">        ticket++;</span><br><span class="line">        System.out.println(Thread.currentThread().getName()+<span class="string">&quot;-&gt;&quot;</span>+ticket);</span><br><span class="line">        <span class="keyword">this</span>.notify();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2、JUC版，Lock+(Condition)await+signal</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//生产者消费者</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Ticket</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> ticket = <span class="number">0</span>;</span><br><span class="line">    Lock lock = <span class="keyword">new</span> ReentrantLock(); <span class="comment">//可重入锁</span></span><br><span class="line">    Condition condition = lock.newCondition();</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sale</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        lock.lock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">while</span>(ticket == <span class="number">0</span>)&#123;</span><br><span class="line">                condition.await();</span><br><span class="line">            &#125;</span><br><span class="line">            ticket--;</span><br><span class="line">            System.out.println(Thread.currentThread().getName()+<span class="string">&quot;-&gt;&quot;</span>+ticket);</span><br><span class="line">            condition.signal();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException</span>&#123;</span><br><span class="line">        lock.lock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//使用if会产生虚假唤醒，当同时有多个线程同时进入时，如果此时ticket == 0 ，进入的线程都会是ticket++</span></span><br><span class="line">            <span class="keyword">while</span>(ticket != <span class="number">0</span>)&#123;</span><br><span class="line">                condition.await();</span><br><span class="line">            &#125;</span><br><span class="line">            ticket++;</span><br><span class="line">            System.out.println(Thread.currentThread().getName()+<span class="string">&quot;-&gt;&quot;</span>+ticket);</span><br><span class="line">            condition.signal();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Condition精准的通知和唤醒线程</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> ticket = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Lock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">    <span class="keyword">private</span> Condition condition1 = lock.newCondition();</span><br><span class="line">    <span class="keyword">private</span> Condition condition2 = lock.newCondition();</span><br><span class="line">    <span class="keyword">private</span> Condition condition3 = lock.newCondition();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printfA</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        lock.lock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">while</span>(ticket != <span class="number">0</span>)&#123;</span><br><span class="line">                condition1.await();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(Thread.currentThread().getName()+<span class="string">&quot;-&gt;AAAAAAAAAAAAA&quot;</span>);</span><br><span class="line">            ticket = <span class="number">1</span>;</span><br><span class="line">            condition2.signal();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">printfB</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException</span>&#123;</span><br><span class="line">        lock.lock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//使用if会产生虚假唤醒，当同时有多个线程同时进入时，如果此时ticket == 0 ，进入的线程都会是ticket++</span></span><br><span class="line">            <span class="keyword">while</span>(ticket != <span class="number">1</span>)&#123;</span><br><span class="line">                condition2.await();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(Thread.currentThread().getName()+<span class="string">&quot;-&gt;BBBBBBBBBBB&quot;</span>);</span><br><span class="line">            ticket=<span class="number">2</span>;</span><br><span class="line">            condition3.signal();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">....</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>synchronized与ReentrantLock的区别</strong> ：<a href="https://baijiahao.baidu.com/s?id=1648624077736116382&amp;wfr=spider&amp;for=pc">https://baijiahao.baidu.com/s?id=1648624077736116382&amp;wfr=spider&amp;for=pc</a></p>
+</blockquote>
+<h2 id="4、8锁现象"><a href="#4、8锁现象" class="headerlink" title="4、8锁现象"></a>4、8锁现象</h2><p>如何判断锁的是谁！永远知道什么锁，锁到底锁的是谁！</p>
+<blockquote>
+<p><strong>synchronized 锁的对象是方法的调用者 ，谁先拿到谁先执行</strong></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Ticket tc = <span class="keyword">new</span> Ticket();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            tc.sendMes();</span><br><span class="line">        &#125;).start();</span><br><span class="line">        <span class="comment">//可以再次进行sleep</span></span><br><span class="line">        <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            tc.call();</span><br><span class="line">        &#125;).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Ticket</span></span>&#123;</span><br><span class="line"><span class="comment">//    synchronized 锁的对象是方法的调用者 ，谁先拿到谁先执行</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">sendMes</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;发短信&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;打电话&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>当使用synchronized修饰静态方法时，锁的是类（先电话后短信）</strong></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Ticket tc1 = <span class="keyword">new</span> Ticket();</span><br><span class="line">        Ticket tc2 = <span class="keyword">new</span> Ticket();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            tc1.sendMes();</span><br><span class="line">        &#125;).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            tc2.call();</span><br><span class="line">        &#125;).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Ticket</span></span>&#123;</span><br><span class="line"><span class="comment">//    synchronized 锁的对象是方法的调用者 ，谁先拿到谁先执行</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">sendMes</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            TimeUnit.SECONDS.sleep(<span class="number">4</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;发短信&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;打电话&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>synchronized锁静态方法和普通方法时，静态方法发生sleep，先执行普通方法</strong>（先电话后短信）</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Ticket tc = <span class="keyword">new</span> Ticket();</span><br><span class="line">        Ticket tcs = <span class="keyword">new</span> Ticket();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            tc.sendMes();</span><br><span class="line">        &#125;).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            tcs.call();</span><br><span class="line">        &#125;).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Ticket</span></span>&#123;</span><br><span class="line"><span class="comment">//    synchronized 锁的对象是方法的调用者 ，谁先拿到谁先执行</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">sendMes</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            TimeUnit.SECONDS.sleep(<span class="number">2</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;发短信&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;打电话&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="5、集合类不安全"><a href="#5、集合类不安全" class="headerlink" title="5、集合类不安全"></a>5、集合类不安全</h2><blockquote>
+<p><strong>List不安全</strong></p>
+</blockquote>
+<p><strong>解决方案</strong>：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//1.Vector是jdk1.0就出现的集合类，list是jdk2.0出现的。</span></span><br><span class="line"><span class="comment">//Vector在jdk1.2时给add方法添加了synchronized锁</span></span><br><span class="line">List&lt;String&gt; list = <span class="keyword">new</span> Vector&lt;&gt;();</span><br><span class="line"><span class="comment">//2.Collections</span></span><br><span class="line">List&lt;String&gt; list = Collections.synchronizedList(<span class="keyword">new</span> ArrayList&lt;&gt;());</span><br><span class="line"><span class="comment">//3.juc</span></span><br><span class="line"><span class="comment">//CopyOnWriteArrayList 使用的是lock锁，而Vector使用的是synchronized锁</span></span><br><span class="line">List&lt;String&gt; list = <span class="keyword">new</span> CopyOnWriteArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">                list.add(UUID.randomUUID().toString().substring(<span class="number">0</span>,<span class="number">5</span>));</span><br><span class="line">                System.out.println(list);</span><br><span class="line">            &#125;).start();</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>Set不安全</strong></p>
+</blockquote>
+<p><strong>解决方案</strong>：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Set&lt;String&gt; set = new HashSet&lt;&gt;();</span></span><br><span class="line"><span class="comment">// Set&lt;String&gt; set = Collections.synchronizedSet(new HashSet&lt;&gt;());</span></span><br><span class="line">Set&lt;String&gt; set = <span class="keyword">new</span> ConcurrentHashSet&lt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">        set.add(UUID.randomUUID().toString().substring(<span class="number">0</span>,<span class="number">5</span>));</span><br><span class="line">        System.out.println(set);</span><br><span class="line">    &#125;).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>hashSet的底层是HashMap</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">HashSet</span><span class="params">()</span></span>&#123;</span><br><span class="line">    map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//add set 本质就是 map key是无法重复的！</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> map.put(e, PRESENT) == <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object PRESENT = <span class="keyword">new</span> Object();</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>HashMap不安全</strong></p>
+</blockquote>
+<p><strong>解决方案</strong>：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//map 是这样用的么？  不是， 工作中不用HashMap</span></span><br><span class="line"><span class="comment">//默认等价于什么？  new HashMap&lt;&gt;(0.75,16);</span></span><br><span class="line">	Map&lt;String,String&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"><span class="comment">//结局方案</span></span><br><span class="line"><span class="comment">//        map = new ConcurrentHashMap&lt;&gt;();</span></span><br><span class="line"><span class="comment">//        map = Collections.synchronizedMap(new HashMap&lt;&gt;());</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">                map.put(Thread.currentThread().getName(), UUID.randomUUID().toString());</span><br><span class="line">                System.out.println(map);</span><br><span class="line">            &#125;,String.valueOf(i)).start();</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>concurrentHashMap：<a href="https://www.jianshu.com/p/d0b37b927c48">https://www.jianshu.com/p/d0b37b927c48</a></p>
+</blockquote>
+]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2021/01/08/spring/spring+mybatis%E9%9D%A2%E8%AF%95/</url>
+    <content><![CDATA[<h1 id="Spring"><a href="#Spring" class="headerlink" title="Spring"></a>Spring</h1><h2 id="bean的生命周期"><a href="#bean的生命周期" class="headerlink" title="bean的生命周期"></a>bean的生命周期</h2><p>class –&gt; BeanDefinition  —-&gt;    实例化（对象） -&gt;  填充属性(对象中的属性赋值) -&gt; BeanNameAware(获取对象的name) –&gt; InittializingBean(象中的属性值为另一个属性的值)</p>
+<h2 id="Spring循环依赖"><a href="#Spring循环依赖" class="headerlink" title="Spring循环依赖"></a>Spring循环依赖</h2><p>​    <strong>1.什么是循环依赖</strong>：循环依赖就是AService类中包含有BService的属性，而BService类中同样包含AService的属性，导致spring在生成给AService和BService生成bean时所产生循环依赖的现象。</p>
+<p>​    <strong>2.AService类的生命周期：</strong></p>
+<blockquote>
+<p>1.class</p>
+<p>2.CreatingMap将AService放入map中（此时代表AService正在创建）</p>
+<p>3.创建一个AService对象(new AService())：原始对象 –&gt; 三级缓存&lt;beanName:Llambda对象&gt;</p>
+<p><strong>注：</strong>将创建的原始对象放入map中（三级缓存）</p>
+<p>4.填充属性 –&gt; 填充bService –&gt; 从单例池中寻找是否有BService的实例 –&gt; 找不到 –&gt; 创建BService对应的bean</p>
+<p><strong>注：</strong>此时进入BService类的生命周期</p>
+<p>5.初始化</p>
+<p>6.BeanPostProcessor  –&gt; AOP</p>
+<p>7.从二级缓存中去哪Aservice的代理对象</p>
+<p>8.放入单例池（singltonObjects  == 一级缓存）</p>
+</blockquote>
+<p>​    <strong>3.BService类的生命周期：</strong></p>
+<blockquote>
+<p>1.class</p>
+<p>2.创建一个BService的对象( new BService())</p>
+<p>3.填充属性 –&gt; 填充aService –&gt; 从单例池里去找 –&gt; 找不到 –&gt; 从CreatingMap中找 –&gt; 存在（出现了循环依赖） –&gt; 从第二级缓存中找 –&gt; 不存在时，进入第三级缓存 –&gt; 执行lambda（原始对象）语句 –&gt; 生成代理对象（包含原始对象）–&gt; 放入第二级缓存</p>
+<p>4.初始化</p>
+<p>5.BeanPostProcessor  </p>
+<p>6.放入单例池</p>
+</blockquote>
+<p>​    <strong>3.CService类的声明周期：</strong>当AService中同时存在BService和CService的属性时，CService也存在AService的属性。</p>
+<blockquote>
+<p>1.class</p>
+<p>2.创建一个CService的对象( new CService() )</p>
+<p>3.填充属性 –&gt; 填充aService –&gt; 从单例池中寻找 –&gt; 找不到 –&gt; 从CreatingMap中寻找 –&gt; 存在，出现了循环依赖 –&gt; 从第二级缓存中寻找 –&gt; 存在 –&gt; 拿到该代理对象</p>
+<p><strong>注：第二级缓存中寻找是因为BService已经创建了AService的代理对象，并将其放入二级缓存中</strong></p>
+<p>4.初始化</p>
+<p>5.BeanPostProcessor  </p>
+<p>6.放入单例池</p>
+</blockquote>
+<h1 id="Mysql索引底层原理解析"><a href="#Mysql索引底层原理解析" class="headerlink" title="Mysql索引底层原理解析"></a>Mysql索引底层原理解析</h1><p>Mysql的页：默认16kb大小，每次取数据时，一次取一页大小的数据</p>
+]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2021/01/08/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</url>
+    <content><![CDATA[<p>— title: 脚本参数化的思考 date: 2019-01-01 11:20:32 tags: [参数化,性能测试] categories: 工作 toc: true —</p>
+<h3 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a>应用层</h3><p>应用层协议是指应用进程（进程：主机中正在运行的程序）间的通信和交互的规则。应用层交互的数据单元称为报</p>
+<h3 id="表示层"><a href="#表示层" class="headerlink" title="表示层"></a>表示层</h3><p>表示层的功能就是当电脑从网卡收到一串数据时，<strong>将这些二进制格式的数据转换成我们能识别的数据</strong>。</p>
+<p>表示层的基本作用就是对<strong>数据格式进行编译</strong>，对收到或发出的数据根据应用层的特征进行处理。表示层能为应用程序提供<strong>特殊的数据处理功能</strong>。表示层提供数据的压缩、解压、加密等服务，为应用层提供语法选择，语法转换。</p>
+<p>例：A电脑用浏览器浏览网站B，在网站B里有一张gif图片，但是B电脑无法识别gif格式的图片，于是在A电脑的浏览器里应该显示这张gif图片的地方会显示为叉叉。</p>
+<h3 id="会话层"><a href="#会话层" class="headerlink" title="会话层"></a>会话层</h3><p>在发送方和接收方之间进行通信时创建、维持、之后终止或断开连接的地方，主要任务是负责两个网络参与者之间的通信。</p>
+<blockquote>
+<p>应用层、表示层、会话层为OSI模型中的上层结构，也可以称为应用层。</p>
+<p><strong>常见的网络协议：</strong></p>
+<p>1、超文本传输协议：http/https    </p>
+<p>2、文件传输协议：FTP    </p>
+<p>3、简单邮件传输协议：SMTP</p>
+<p>4、域名系统：DNS（ Domain Name Service）</p>
+<p>5、安全外壳协议：SSH</p>
+<p>6、动态主机配置协议：DHCP（Dynamic Host Configuration Protocol）</p>
+<p>7、远程控制协议：TELNET</p>
+</blockquote>
+<blockquote>
+<p><strong>DHCP协议：动态主机设置协议</strong>是一个局域网的网络协议，<strong>使用UDP协议工作</strong>，主要有两个用途</p>
+<ul>
+<li><p>给内部网络或网络服务供应商<strong>自动分配IP地址给用户</strong></p>
+</li>
+<li><p>给内部网络管理员作为对所有电脑作中央管理的手段</p>
+<p>  <strong>也就是说是给局域网内部节点自动分配IP地址的。</strong></p>
+</li>
+</ul>
+</blockquote>
+<h3 id="传输层"><a href="#传输层" class="headerlink" title="传输层"></a>传输层</h3><p>传输层的主要任务就是负责向两台主机进程之间的通信提供通用的数据传输服务。为会话层提供可靠的、无误的数据传输。</p>
+<blockquote>
+<p><strong>常见的网络协议：</strong><code>TCP（Transmission Control Protocol）</code>、<code>UDP</code></p>
+</blockquote>
+<blockquote>
+<p><strong>TCP：</strong>传输控制协议是面向<strong>连接的</strong>、<strong>可靠的</strong>、<strong>基于字节流</strong>的传输层通信协议，把连接作为最基本的对象，每一条TCP连接都有两个端点，这种断点我们叫做套接字，它的定义为端口号拼接到IP地址即构成了套接字，</p>
+<p>例如：若IP地址为127.0.0.1而端口号为80，那门得到的套接字为127.0.0.1:80</p>
+<p><strong>保证可靠传输的措施</strong></p>
+<ul>
+<li><strong>连接管理：</strong>TCP是面向连接的，<strong>三次握手和四次挥手</strong>都保证了本次数据传输的可靠性。</li>
+<li><strong>序列号：</strong>保证<strong>数据段的按序到达</strong>，TCP是面向字节流的，它对每一个字节都进行了编号，接收端也是根据序号来对收到的数据进行排序，如果中间有某个数据报丢了，则之后的数据报还是会接受，但是不会对发送端返回之后的确认，而是会重复发送对丢失之前数据的确认，保证发送端会对丢失数据段进行重发。</li>
+<li><strong>超时重传机制：</strong>当TCP发出一个段后，它将启动一个定时器，等待目的端确认收到这个报文段。如果不能及时收到一个确认，将重发这个报文段。</li>
+<li><strong>流量控制：</strong>根据接收端处理数据的能力来控制发送端发送数据的速度。接收端将自己接收缓冲区的空闲空间的大小填充到TCP的报文头中的窗口大小的字段中，通过<code>ACK（确认字符）</code>确认应答发送给发送端。如果接收端的接收缓冲区快满了。接收端会将窗口大小设置一个更小的值发送给发送端，这是发送端的发送速度就会减慢；如果接口端接收缓冲区彻底满了，接收端就会将窗口大小设置为0，这是发送端边停止发送数据段，但是会定时的发送一个串口探测报文，依次来获取接收端的接收缓冲区状态。</li>
+<li><strong>拥塞控制：</strong>TCP的拥塞控制由4个核心算法组成“慢启动”（Slow Start）、“拥塞避免”（Congestion voidance）、“快速重传”（Fast Retransmit）、“快速恢复”（Fast Recovery）。<ul>
+<li><strong>慢启动：</strong>当主机开始发送数据的时候，如果立刻把大量的数据字节注入到网络，那么可能会引起网络阻塞和丢包，因为目前主机还不知道网络状况。所以这种思想是先试探一下，根据网络状况由小到大增大发送窗口，也就是由小到大逐渐增大拥塞窗口的数值</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h3 id="网络层"><a href="#网络层" class="headerlink" title="网络层"></a>网络层</h3><p>网络层的任务就是选择合适的网间路由和交换节点（通过IP寻址），确保数据及时传送。在发送数据时，网络层把运输层产生的报文段或用户数据报分装成分组和包进行传送。</p>
+<blockquote>
+<p><strong>常见的网络协议：</strong></p>
+<p>1、网际协议：IP</p>
+<p>2、地址转换协议：ARP</p>
+<p>3、反向地址转换协议：RARP</p>
+<p>4、Internet控制报文协议：ICMP（Internet Control Message Protocol）</p>
+<p>5、Internet组管理协议：IGMP</p>
+<p>6、路由信息协议：RIP</p>
+<p>7、分布式链路状态协议：OSPF</p>
+<p>8、边界网关协议：BGP</p>
+</blockquote>
+<blockquote>
+<p><strong>ARP协议（网络层和数据链路层）：</strong>每台主机都会在自己的<strong>ARO缓冲区</strong>中建立一个ARP列表，以<strong>表示IP地址和MAC地址的对应关系</strong>。当源主机要发送数据包时，会先去查ARP缓冲区中是否含有目标主机IP地址对应的MAC地址。有就直接发送，没有就发送一个ARP请求的广播包。</p>
+<p>此ARP广播包中包含源主机IP地址、硬件地址、以及目标主机的IP地址。网络中所有主机收到这个ARP请求后，会检查数据包中的目的IP是否和自己的IP地址一致。如果相同，该主机<strong>首先将发送端的 MAC 地址和 IP 地址添加到自己的 ARP 列表中，如果 ARP 表中已经存在该 IP 的信息，则将其覆盖</strong>，然后给源主机发送一个 ARP 响应数据包，告诉对方自己是它需要查找的 MAC 地址；源主机收到这个 ARP 响应数据包后，将得到的目的主机的 IP 地址和 MAC 地址添加到自己的 ARP 列表中，并利用此信息开始数据的传输。如果源主机一直没有收到 ARP 响应数据包，表示 ARP 查询失败。</p>
+</blockquote>
+<blockquote>
+<p><strong>ICMP协议：</strong>Internet控制消息协议 用于在IP主机、路由器之间传递控制消息（<code>值网络通不通</code>，<code>主机是否可达</code>、<code>路由是否可用</code>等网络本身的消息。这些控制消息虽然并不能传输用户数据，但是对于用户数据的传递起着重要的作用）</p>
+<p>主机探测、路由维护、路由选择、流量控制。我们常用的<code>ping</code>命令和<code>traceroute</code>(网络一端到另一端走的是什么路径)命令都是通过ICMP协议来实现的。</p>
+</blockquote>
+<h3 id="数据链路层"><a href="#数据链路层" class="headerlink" title="数据链路层"></a>数据链路层</h3><p>在两个相邻节点之间传送数据时，数据链路层将网络层交下来的 IP 数据报组装成帧，在两个相邻节点间的链路上传送帧。在此期间，还需要对传送的数据进行检错和纠错。 所以这一层的作用为<strong>分装成帧，差错校验</strong>。</p>
+<blockquote>
+<p><strong>常见的网络协议：</strong></p>
+<p>1、自动重传请求协议：ARQ</p>
+<p>2、停止等待协议：CSMA/CD</p>
+<p>3、点对点协       议：PPP</p>
+</blockquote>
+<h3 id="物理层"><a href="#物理层" class="headerlink" title="物理层"></a>物理层</h3><p>物理层的作用是尽可能地屏蔽掉物理设备和传输媒体的差异，使其上面的数据链路层不比考虑万罗的具体传输介质是什么。</p>
+<blockquote>
+<p><strong>浏览器中输入URL到返回页面的全过程</strong></p>
+</blockquote>
+<p>​    1.检查浏览器缓存是否有该URL的IP地址。</p>
+<p>​    2.然后进行DNS域名解析，先去访问本地的hosts文件，如果没有再去DNS服务器上查。</p>
+<p>​    3.解析完后，根据获取的IP地址，建立TCP连接。</p>
+<p>​    4.向IP地址发送http请求。</p>
+<p>​    5.服务器处理请求。</p>
+<p>​    6.返回响应结果。</p>
+<p>​    7.关闭TCP连接。</p>
+<p>​    8.浏览器解析HTML。</p>
+<p>​    9.浏览器渲染页面</p>
+<blockquote>
+<p>DNS的规范定了2种类型的DNS服务器，一个叫主DNS服务器，一个叫辅助DNS服务器。在一个区中主DNS服务器从自己本机的数据文件中读取该区的DNS数据信息，而<strong>辅助DNS服务器则从区的主DNS服务器中读取该区的DNS数据信息</strong>。当一个辅助DNS服务器启动时，它需要与主DNS服务器通信，并加载数据信息，这就叫做<strong>区传送</strong>（zone transfer）。 这种情况下，使用TCP协议。</p>
+</blockquote>
+<blockquote>
+<p><strong>域名解析为什么用UDP</strong>：因为UDP快，UDP的DNS协议只要一个请求，一个应答就好了，二使用基于TCO的DNS协议要三次握手、发送数据一级应答、四次握手。但是<strong>UDP协议传输内容不超过512字节</strong>，不过<strong>客户端向DNS服务器查询域名，一般返回的内容都不超过512字节</strong>，用UDP传输即可。</p>
+</blockquote>
+<h3 id="DNS解析原理"><a href="#DNS解析原理" class="headerlink" title="DNS解析原理"></a>DNS解析原理</h3><p>先介绍linux下一个<code>dig</code>命令，以显示解析域名的过程。 为了便于说明，我们来<code>dig</code>一下天猫的过程</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">dig www.tmall.com</span><br></pre></td></tr></table></figure>
+<p>结果如下图所示 </p>
+<p><img src="https://uploader.shimo.im/f/oLTR6WJg8aKz3ebt.png!thumbnail" alt="img"></p>
+<p>莫方，看不懂没事。 现在我们来读重点的两段。第一段代表请求参数如下图所示 </p>
+<p><img src="https://uploader.shimo.im/f/d19COkdsv4FvTQOS.png!thumbnail" alt="img"></p>
+<p>这段为查询内容。 DNS的查询参数一般有三个 </p>
+<ul>
+<li><p>(1)域名:服务器、邮件服务器(邮件地址中 @ 后面的部分)的名称 </p>
+</li>
+<li><p>(2)Class:在设置DNS方案时，互联网之外的网络也考虑到了，而Class就是用来识别网络的，不过<strong>现在只有互联网，所以它的值永远都是代表互联网的IN</strong> </p>
+</li>
+<li><p>(3)记录类型:标识域名对应何种类型的记录。<code>类型为A,表示域名对应的IP地址</code>。<code>类型为MX时,表示域名对应的是邮件服务器</code>。<code>类型为PTR,表示根据IP地址反查域名</code>。<code>类型为CNAME,表示查询域名相关别名</code>。</p>
+</li>
+</ul>
+<h3 id="IP"><a href="#IP" class="headerlink" title="IP"></a>IP</h3><p>ip地址在java中的类：InetAddress（不能被实例化）、InetSocketAddress</p>
+<ul>
+<li><p>ip地址的分类</p>
+<ul>
+<li><p>ipv4/ ipv6</p>
+<ul>
+<li><p><strong>IPV4</strong> 127.0.0.1 ，4个字节组成。0-255，一共42亿~；30亿在北美，亚洲4亿。在2011年时用尽；</p>
+</li>
+<li><p><strong>IPV6</strong> 240e:33d:32:5a00:10f5:4aa5:8e72:e86e， 一共128位。8个无符号整数！</p>
+<p>  ​    </p>
+</li>
+</ul>
+</li>
+<li><p>公网（互联网给） - 私网（局域网）</p>
+<ul>
+<li>192.168.XXX.XXX</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="端口"><a href="#端口" class="headerlink" title="端口"></a>端口</h3><p>端口表示计算机上的一个程序的进程</p>
+<ul>
+<li><p>不同的进程有不同的端口号！用来区分软件！</p>
+</li>
+<li><p>端口号范围为0~65535</p>
+</li>
+<li><p>协议类型有TCP，UDP：65535*2 个。</p>
+<ul>
+<li>即tcp端口为80时，还可以存在一个udp协议为80的端口号。</li>
+<li>单个协议下端口号不能重复</li>
+</ul>
+</li>
+<li><p>端口分类</p>
+<ul>
+<li><p>公有端口0~1023</p>
+<ul>
+<li>HTTP:80</li>
+<li>HTTPS:443</li>
+<li>FTP:21</li>
+<li>Telnet：23</li>
+</ul>
+</li>
+<li><p>程序注册端口1024~49151，分配用户或者程序</p>
+</li>
+<li><p>程序注册端口：1024~49151，分配用户或者程序</p>
+</li>
+<li><p>动态、私有：49152~65335</p>
+  <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netstat -ano <span class="comment">#查看所有的端口</span></span><br><span class="line">netstat -ano|findstr <span class="string">&quot;5900&quot;</span> <span class="comment">#查看指定的端口</span></span><br><span class="line">tasklist|findstr <span class="string">&quot;8696&quot;</span> <span class="comment">#查看指定端口的进程</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</li>
+</ul>
+</li>
+</ul>
+<p>是</p>
+]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2021/01/08/spring/spring-boot/</url>
+    <content><![CDATA[<h1 id="1、Springboot的基本使用"><a href="#1、Springboot的基本使用" class="headerlink" title="1、Springboot的基本使用"></a>1、Springboot的基本使用</h1><h2 id="1、主程序入口与常见注解"><a href="#1、主程序入口与常见注解" class="headerlink" title="1、主程序入口与常见注解"></a>1、主程序入口与常见注解</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloBootApplication</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        SpringApplication.run(HelloBootApplicaiton.class,args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>​    **@SpringBootApplication:**说明这类是SpringBoot的主配置类，SpringBoot就应该运行这个类的main方法来启动应用。</p>
+</blockquote>
+<p>​    <strong>进入SpringBootApplication注解后</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Target(&#123;ElementType.TYPE&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Inherited</span></span><br><span class="line"><span class="meta">@SpringBootConfiguration</span></span><br><span class="line"><span class="meta">@EnableAutoConfiguration</span></span><br><span class="line"><span class="meta">@ComponentScan(</span></span><br><span class="line"><span class="meta">    excludeFilters = &#123;@Filter(</span></span><br><span class="line"><span class="meta">    type = FilterType.CUSTOM,</span></span><br><span class="line"><span class="meta">    classes = &#123;TypeExcludeFilter.class&#125;</span></span><br><span class="line"><span class="meta">), @Filter(</span></span><br><span class="line"><span class="meta">    type = FilterType.CUSTOM,</span></span><br><span class="line"><span class="meta">    classes = &#123;AutoConfigurationExcludeFilter.class&#125;</span></span><br><span class="line"><span class="meta">)&#125;</span></span><br><span class="line"><span class="meta">)</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>​    <strong>@SpringBootConfiguration：</strong>包含@<code>Configuration</code>注解，<code>SpringBoot</code>的配置类，标注在某个类上，表示这是一个<code>SpringBoot</code>的配置类</p>
+</blockquote>
+<blockquote>
+<p>​    <strong>@Configuration：</strong>配置类，用来代替之前的spring的配置文件。</p>
+</blockquote>
+<blockquote>
+<p>​    <strong>@EnableAutoConfiguration：</strong>开启自动配置功能，以前需要自动配置的东西，springboot帮我们自动配置。使用这个注解后自动配置才能生效。</p>
+</blockquote>
+<p>​    在这个注解中，最关键的要属<code>@Import(AutoConfigurationImportSelector.class)</code>，借助AutoConfigurationImportSelector，<code>@EnableAutoConfiguration</code><strong>可以帮助SpringBoot应用将所有符合条件的@Configuration配置都加载到当前SpringBoot创建的IoC容器中</strong></p>
+<blockquote>
+<p>​    <strong>@AutoConfigurationPackage：</strong>自动配置包，将主配置类（@SpringBootApplication标注的类）的所在包及下面所有的自保里面的所有组件扫描到Spring容器。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">&lt;context:component-scan base-<span class="keyword">package</span>=<span class="string">&quot;***&quot;</span>/&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>​    <strong>@Import({a.class, b.class})：</strong>通过快速导入的方式实现把实例加入spring的IOC容器中</p>
+</blockquote>
+<blockquote>
+<p>​    <strong>@PropertySource：</strong>读取配置文件的路径</p>
+</blockquote>
+<blockquote>
+<p>​    <strong>@ConfigurationProperties（prefix=“XX”）：</strong>读取配置文件中的数据，告诉springboot将文本的所有属性和配置文件中的相关配置进行绑定。 prefix = “XX” 表示配置文件中数据的前缀。并且类中要赋值的属性要实现get、set方法。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//配置文件中的值为：test.money=200</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;test&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">hello</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String money;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getMoney</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> money;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMoney</span><span class="params">(String money)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.money = money;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>​    <strong>@ImportResource(“xxx.xml”)：</strong>导ConfigurationProperties入Spring的配置文件，并让这个配置文件生效。该注解需要放在主配置类上(@SpringBootApplication)</p>
+</blockquote>
+<p>​    缺点：每次指定xml文件太麻烦，<strong>SpringBoot推荐使用全注解方式@Configuration+@Bean</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Configuration</span>：指明当前类是一个配置类；就是来代替之前的Spring配置文件</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 在配置文件中用&lt;bean&gt;&lt;/bean&gt;标签添加组件</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyAppConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//将方法的返回值添加到容器中；容器这个组件id就是方法名</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> HelloService <span class="title">helloService01</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> HelloService();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//即使用如下方法判断ioc中是否包含HelloService的bean</span></span><br><span class="line">ApplicationContext ac = <span class="keyword">new</span> ApplicationContext();</span><br><span class="line">ac.containsBean(<span class="string">&quot;helloService01&quot;</span>);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>@Value：</strong></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//获取map</span></span><br><span class="line"><span class="meta">@Value(&quot;#&#123;$&#123;test.map&#125;&#125;&quot;)</span></span><br><span class="line">HashMap&lt;Object,Object&gt; map;</span><br><span class="line"></span><br><span class="line"><span class="comment">//随机数(数字+字母)</span></span><br><span class="line"><span class="meta">@Value(&quot;$&#123;random.value&#125;&quot;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//其它随机数</span></span><br><span class="line">$&#123;random.<span class="keyword">int</span>&#125;、$&#123;random.<span class="keyword">long</span>&#125;、$&#123;random.<span class="keyword">int</span>(<span class="number">10</span>)&#125;、$&#123;random.<span class="keyword">int</span>[<span class="number">100</span>,<span class="number">200</span>]&#125;、$&#123;random.uuid&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>​    <strong>自定义注解：</strong>只要在定义接口的基础上在<code>interface</code>前加上@符号，这时候接口就变成了注解的定义了。还需要在接口的上面加上关键字<code>@target</code>和<code>@retention</code>，另外<code>@documentend</code>和<code>@constraint</code>是非必须的。</p>
+</blockquote>
+<p>​    1、<code>@target</code>说明了注解修饰的对象范围（即：被描述的注解可以用在什么地方）。</p>
+<p>​        <code>TYPE</code>:类，接口，枚举；<code>FIELD</code>:字段(域)；<code>METHOD</code>:方法；<code>PARAMETER</code>:参数；<code>CONSTRUCTOR</code>:构造函数；<code>LOCAL_VARIABLE</code>:局部变量；<code>ANNOTATION_TYPE</code>:注解（应用于另一个注解上）；​ <code>PACKAGE</code>:包；<code>TYPE_PARAMETER</code>:类型参数声明；<code>TYPE_USE</code>:类型使用声明</p>
+<p>​        <strong>注：当<code>Target</code>没有指定值时，则该注解可以用于任何元素之上，多个值使用{}包含并用逗号隔开。</strong></p>
+<p>​    2、<code>@retention</code>用来表示该注解的生存周期。</p>
+<p>​        <strong>SCOPE：</strong>注解将被编译器丢弃（该类型的注解信息只会保留在源码里，源码编译过后，注解信息会被丢弃，不会保留在编译好的class文件里）</p>
+<p>​        <strong>CLASS：</strong>注解在class文件中可用，但会被JVM丢弃（该类型的注解信息会保留在源码里和class文件里，再执行的时候，不回家再到虚拟机中），<strong>当未指定Retention值时，默认值是CLASS</strong>。如java内置注解，<code>@Override</code>、<code>@Deprecated</code>、<code>@SuppressWarnning</code>等</p>
+<p>​        <strong>RUNTIME：</strong>注解信息将在运行期JVM中也保留，因此可以通过反射机制读取注解的信息，如SpringMvc中的<code>@Controller</code>、<code>@Autowired</code>、<code>@RequestMapping</code>等。</p>
+<blockquote>
+<p><strong>注解支持的元素类型</strong>（使用其他数据类型，编译器会丢出一个编译异常）</p>
+</blockquote>
+<p>​        1、所有基本类型（int、float、double、long、char、boolean、byte、short）</p>
+<p>​        2、String</p>
+<p>​        3、Class</p>
+<p>​        4、enum</p>
+<p>​        5、Annotation</p>
+<p>​        6、上述类型的数组</p>
+<blockquote>
+<p><strong>注解不支持继承</strong></p>
+</blockquote>
+<blockquote>
+<p>​    <strong>@Inherited</strong>：可以让注解被继承，但这并不是真的继承，只是通过使用<code>@Inherited</code>，可以让子类Class对象使用<code>getAnnotations()</code>获取父类被<code>@Inherited</code>修饰的注解。</p>
+</blockquote>
+<blockquote>
+<p>​    <strong>@Documented：</strong>被修饰的注解会生成到javadoc中。</p>
+</blockquote>
+<blockquote>
+<p><strong>Java 8中注解增强</strong></p>
+</blockquote>
+<p>​    1.元注解<code>@Repeatable</code>：它表示在同一个位置重复相同的注解。在没有该注解前，一般是无法在同一个类型上使用相同的注解的</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@FilterPath(&quot;/web/add&quot;)</span></span><br><span class="line"><span class="meta">@FilterPath(&quot;/web/get&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span></span>&#123;&#125;</span><br><span class="line">.....</span><br><span class="line"></span><br><span class="line"><span class="comment">//java8前的解决方案</span></span><br><span class="line"><span class="meta">@Target(ElementType.TYPE)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> FilterPath()&#123;</span><br><span class="line">    String[] value();</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@FilterPath(&#123;&quot;/add&quot;,&quot;/get&quot;&#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//java新增的@Repeatable注解后就可以采用如下的方式定义并使用了</span></span><br><span class="line"><span class="meta">@Target(ElementType.TYPE)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Repeatable(FilterPaths.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> FilterPath&#123;</span><br><span class="line">    <span class="function">String <span class="title">value</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Target(ElementType.TYPE)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@interface</span> FilterPaths&#123;</span><br><span class="line">    FilterPath[] value();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@FilterPath(&quot;/web/update&quot;)</span></span><br><span class="line"><span class="meta">@FilterPath(&quot;/web/add&quot;)</span></span><br><span class="line"><span class="meta">@FilterPath(&quot;/web/delete&quot;)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">student</span></span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>​    </p>
+<blockquote>
+<p>​    <strong>@Pointcut(“@annotation(….)”)：用于匹配当前执行方法持有指定注解的方法，相当于在所有使用注解的地方进行切面。</strong></p>
+</blockquote>
+<blockquote>
+<p>​    <strong>@AutoConfigureAfter({AClass.class})**：配置完</strong><code>AClass</code>**后之后再来配置当注解的类。</p>
+</blockquote>
+<blockquote>
+<p>​    **@ConditionalOnProperty( a:xx, b:xx)**：配置该类的条件注解。</p>
+</blockquote>
+<h2 id="2、pom-xml配置文件"><a href="#2、pom-xml配置文件" class="headerlink" title="2、pom.xml配置文件"></a>2、pom.xml配置文件</h2><blockquote>
+<p><strong>配置文件处理器：编写配置有提示</strong></p>
+</blockquote>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">	&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">	&lt;artifactId&gt;spring‐boot‐configuration‐processor&lt;/artifactId&gt;</span><br><span class="line">	&lt;optional&gt;true&lt;/optional&gt;</span><br><span class="line">&lt;/dependency&gt; </span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>​    <strong>spring-bootboot-starter-parent</strong>：指定了当前项目为一个Spring Boot项目，他提供了诸多的默认Maven依赖，在其parent中<code>spring-boot-dependencies</code>的<properties>属性中。</p>
+</blockquote>
+<p>​        需要说明的是，并非<properties>标签中所有的的依赖都有被启用，只有在pom.xml中引入相关的启动器（starter），其所需的依赖才会被引入。</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&lt;parent&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;2.3.2.RELEASE&lt;/version&gt;</span><br><span class="line">    &lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;</span><br><span class="line">&lt;/parent&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>​    <strong>spring-boot-starter-web</strong>默认集成了tomcat，让要使用jetty时，可以在pom.xml中<code>spring-boot-starter-web</code>下排除tomcat依赖，然后手动引入jetty依赖</p>
+</blockquote>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&lt;dependencies&gt;</span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;</span><br><span class="line">        &lt;exclusions&gt;</span><br><span class="line">            &lt;exclusion&gt;</span><br><span class="line">                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;spring-boot-starter-tomcat&lt;/artifactId&gt;</span><br><span class="line">            &lt;/exclusion&gt;</span><br><span class="line">        &lt;/exclusions&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;spring-boot-starter-jetty&lt;/artifactId&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br><span class="line">&lt;/dependencies&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>spring-boot-maven-plugin：</strong><code>spring-boot-maven-plugin</code>为Spring Boot Maven提供了：</p>
+<p>​    1.把项目打包成一个可执行的超级jar，包括把应用程序的所有依赖打入jar文件内，并为jar添加一个描述文件，其中的内容能让你用<code>java -jar</code>来运行应用程序。</p>
+<p>​    2.搜索<code>public static void main()</code>方法来标记为可运行类。</p>
+</blockquote>
+<h2 id="3、Profile"><a href="#3、Profile" class="headerlink" title="3、Profile"></a>3、Profile</h2><p>​    在主配置文件编写的时候，文件名可以是application-{profile}.properties/yml。即当进行开发时会出现多种各不同的环境，比如：开发、测试、灰度、生产等，其中每个环境的数据库地址、服务器端口号都可能不同，这是时就要使用application-{profile}.properties/yml来配置多个环境。</p>
+<blockquote>
+<p><strong>在application.properties配置文件中指定：spring.profile.active={profile}，行切切换</strong></p>
+</blockquote>
+<h2 id="4、加载配置文件位置"><a href="#4、加载配置文件位置" class="headerlink" title="4、加载配置文件位置"></a>4、加载配置文件位置</h2><blockquote>
+<p>以下顺序优先级由高到底，高优先级会覆盖低优先的相同配置；互补配置</p>
+<ul>
+<li>file:./config/</li>
+<li>file./</li>
+<li>classpath:/config/</li>
+<li>classpath:/</li>
+</ul>
+<p>​    也可以通过指定配置spring.config.location来改变默认配置，一般在项目已经打包后，我们可以通过指令<strong>java -jar xxx.jar –spring.config.location=配置文件的路劲来加载外部配置</strong>。</p>
+</blockquote>
+<h2 id="5、自动配置"><a href="#5、自动配置" class="headerlink" title="5、自动配置"></a>5、自动配置</h2><blockquote>
+<p><a href="https://docs.spring.io/spring-boot/docs/2.0.1.RELEASE/reference/htmlsingle/#common-application-properties">spring的所有配置参数</a></p>
+</blockquote>
+<h3 id="1、自动配置原理"><a href="#1、自动配置原理" class="headerlink" title="1、自动配置原理"></a>1、自动配置原理</h3><p>1）SpringBoot启动的时候加载主配置类，开启自动配置功能，@EnableAutoConfiguration</p>
+<p>2）@EnableAutoConfiguration作用</p>
+<blockquote>
+<p>​    <a href="https://blog.csdn.net/zjcjava/article/details/84028222">详细参考1</a></p>
+<p>​    <a href="https://blog.csdn.net/u014745069/article/details/83820511">详细参考2</a>（全面，包含tomcat的启动端口号）</p>
+</blockquote>
+<p>​    <strong>在全局配置的属性如：server.port等，通过@ConfigurationProperties注解，绑定到对应的XxxxProperties配置实体类上封装为一个bean，然后再通过@EnableConfigurationProperties注解导入到Spring容器中。</strong></p>
+<h2 id="6、SpringBoot的一些基础配置"><a href="#6、SpringBoot的一些基础配置" class="headerlink" title="6、SpringBoot的一些基础配置"></a>6、SpringBoot的一些基础配置</h2><h3 id="1、定制Banner"><a href="#1、定制Banner" class="headerlink" title="1、定制Banner"></a>1、定制Banner</h3><blockquote>
+<p>​    在src/mian/resources目录下新建banner.txt文件，然后将自己的团黏贴进去。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//启动时</span></span><br><span class="line">  _   _   _   _   _   _  </span><br><span class="line"> / \ / \ / \ / \ / \ / \ </span><br><span class="line">( m | r | b | i | r | d )</span><br><span class="line"> \_/ \_/ \_/ \_/ \_/ \_/ </span><br><span class="line">...</span><br><span class="line"><span class="number">2017</span>-08-<span class="number">12</span> <span class="number">10</span>:<span class="number">11</span>:<span class="number">25.952</span>  INFO <span class="number">7160</span> --- [main]..</span><br></pre></td></tr></table></figure>
+<p>在main方法中，也可以关闭banner</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">    SpringApplication sa = <span class="keyword">new</span> SpringApplication();</span><br><span class="line">    sa.setBannerMode(Mode.OFF);</span><br><span class="line">    sa.run(args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2、通过命令行设置属性值"><a href="#2、通过命令行设置属性值" class="headerlink" title="2、通过命令行设置属性值"></a>2、通过命令行设置属性值</h3><p>​    在运行Spring Boot jar文件时，可以使用命令<code>java -jar xxx.jar --server.port=8081</code>来改变端口的值。这条命令等价于我们手动到<code>application.properties</code>中修改<code>server.port</code>的属性值为8081。</p>
+<p>​    如果不想项目的配置被命令行修改，可以在入口文件的main方法中进行设置：</p>
+<p>​    <strong>application.properties中 server.port的默认值为9000</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//test.class为类名</span></span><br><span class="line">    SpringApplication app = <span class="keyword">new</span> SpringApplication(test.class);</span><br><span class="line">    <span class="comment">//设置命令行不能修改配置文件</span></span><br><span class="line">    app.setAddCommandLineProperties(<span class="keyword">false</span>);</span><br><span class="line">    <span class="comment">//禁止banner的启动</span></span><br><span class="line">    app.setBannerMode(Banner.Mode.OFF);</span><br><span class="line">    app.run(args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="2、Springboot与其它项目的整合"><a href="#2、Springboot与其它项目的整合" class="headerlink" title="2、Springboot与其它项目的整合"></a>2、Springboot与其它项目的整合</h1><h2 id="1、整合web"><a href="#1、整合web" class="headerlink" title="1、整合web"></a>1、整合web</h2><h3 id="1、整合servlet"><a href="#1、整合servlet" class="headerlink" title="1、整合servlet"></a>1、整合servlet</h3><h4 id="1、注解注册，使用-WebServlet"><a href="#1、注解注册，使用-WebServlet" class="headerlink" title="1、注解注册，使用@WebServlet"></a>1、注解注册，使用@WebServlet</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//在servlet上使用@WebServlet</span></span><br><span class="line"><span class="meta">@WebServlet(loadOnStartup = -1,urlPatterns = &quot;/helloServelt&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">helloServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//在启动类上添加@ServletComponentScan</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@ServletComponentScan</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test</span> </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="2、组件注册"><a href="#2、组件注册" class="headerlink" title="2、组件注册"></a>2、组件注册</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//可以在启动类中添加方法</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//一定要加，不然这个方法不会运行</span></span><br><span class="line"><span class="meta">@Bean</span>  </span><br><span class="line"><span class="comment">//一定要返回ServletRegistrationBean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ServletRegistrationBean <span class="title">getServletRegistrationBean</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">//放入自己的Servlet对象实例</span></span><br><span class="line">    ServletRegistrationBean bean = <span class="keyword">new</span> ServletRegistrationBean(<span class="keyword">new</span> helloServlet());       <span class="comment">//访问路径值</span></span><br><span class="line">    bean.addUrlMappings(<span class="string">&quot;/helloServlet&quot;</span>);  </span><br><span class="line">    <span class="keyword">return</span> bean;</span><br><span class="line">&#125;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2、整合Filter"><a href="#2、整合Filter" class="headerlink" title="2、整合Filter"></a>2、整合Filter</h3><h4 id="1、注解注册，使用-WebFilter"><a href="#1、注解注册，使用-WebFilter" class="headerlink" title="1、注解注册，使用@WebFilter"></a>1、注解注册，使用@WebFilter</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//在filter类上添加注解@WebFilter</span></span><br><span class="line"><span class="meta">@WebFilter(name=&quot;&quot;,urlPatterns=&quot;/*&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">helloFilter</span> <span class="keyword">implements</span> <span class="title">Filter</span> </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//在启动类上加入@ServletComponentScan</span></span><br><span class="line"><span class="meta">@ServletComponentScan</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test</span> </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="2、组件注册-1"><a href="#2、组件注册-1" class="headerlink" title="2、组件注册"></a>2、组件注册</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//可以在启动类中添加方法</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//一定要加，不然这个方法不会运行</span></span><br><span class="line"><span class="meta">@Bean</span>  </span><br><span class="line"> <span class="function"><span class="keyword">public</span> FilterRegistrationBean <span class="title">filterRegistrationBean</span><span class="params">()</span></span>&#123;</span><br><span class="line">     <span class="comment">//将filter放入</span></span><br><span class="line">     FilterRegistrationBean bean = <span class="keyword">new</span> FilterRegistrationBean(<span class="keyword">new</span> helloFilter（）);</span><br><span class="line">     <span class="comment">//添加fliter的方法：   bean.setFilter(new MyFilter2());</span></span><br><span class="line">     </span><br><span class="line">     <span class="comment">//添加过滤的路径</span></span><br><span class="line">     bean.addUrlPatterns(<span class="string">&quot;/*&quot;</span>);</span><br><span class="line">     <span class="keyword">return</span> bean;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3、整个Listener"><a href="#3、整个Listener" class="headerlink" title="3、整个Listener"></a>3、整个Listener</h3><h4 id="1、注解注册，使用-WebListener"><a href="#1、注解注册，使用-WebListener" class="headerlink" title="1、注解注册，使用@WebListener"></a>1、注解注册，使用@WebListener</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//在listener类上添加注解@WebListener</span></span><br><span class="line"><span class="meta">@WebListener</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">helloListener</span> <span class="keyword">implements</span> <span class="title">ServletContextListener</span> </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//在启动类上加入@ServletComponentScan</span></span><br><span class="line"><span class="meta">@ServletComponentScan</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test</span> </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="2、组件注册-2"><a href="#2、组件注册-2" class="headerlink" title="2、组件注册"></a>2、组件注册</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//可以在启动类中添加方法</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//一定要加，不然这个方法不会运行</span></span><br><span class="line"> <span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ServletListenerRegistrationBean <span class="title">getServletListenerRegistrationBean</span><span class="params">()</span></span>&#123;</span><br><span class="line">    ServletListenerRegistrationBean bean = <span class="keyword">new</span> ServletListenerRegistrationBean(<span class="keyword">new</span> helloListener());</span><br><span class="line">    <span class="keyword">return</span> bean;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="4、访问静态资源与文件上传"><a href="#4、访问静态资源与文件上传" class="headerlink" title="4、访问静态资源与文件上传"></a>4、访问静态资源与文件上传</h3><h4 id="1、静态资源目录"><a href="#1、静态资源目录" class="headerlink" title="1、静态资源目录"></a>1、静态资源目录</h4><p>​    1.springboot从classpath/static的目录下</p>
+<p>​    2.servletContext根目录下（src/main/webapp）</p>
+<h4 id="2、设置文件上传的大小"><a href="#2、设置文件上传的大小" class="headerlink" title="2、设置文件上传的大小"></a>2、设置文件上传的大小</h4><p>在application.properties文件中加入如下配置</p>
+<blockquote>
+<p>//单个文件的最大值</p>
+<p>spring.servlet.multipart.max-request-size=200MB</p>
+<p>//上传文件的总大小（可能包含多个文件）</p>
+<p>spring.servlet.multipart.max-file-size=300MB</p>
+</blockquote>
+<h2 id="2、整合视图层技术"><a href="#2、整合视图层技术" class="headerlink" title="2、整合视图层技术"></a>2、整合视图层技术</h2><h3 id="1、整合jsp（当使用jsp时，就不能引用thymeleaf的启动器，否则页面访问不到jsp）"><a href="#1、整合jsp（当使用jsp时，就不能引用thymeleaf的启动器，否则页面访问不到jsp）" class="headerlink" title="1、整合jsp（当使用jsp时，就不能引用thymeleaf的启动器，否则页面访问不到jsp）"></a>1、整合jsp（当使用jsp时，就不能引用thymeleaf的启动器，否则页面访问不到jsp）</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//因为springboot不建议使用jsp，所以spring-boot-starter-web中不包含jsp</span></span><br><span class="line"><span class="comment">//添加如下依赖</span></span><br><span class="line"><span class="comment">//jstl标签库</span></span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;javax.servlet&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jstl&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line"><span class="comment">//tomcat中处理jsp的引擎</span></span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.apache.tomcat.embed&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;tomcat-embed-jasper&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">    </span><br><span class="line"><span class="comment">//在application.properties中添加配置</span></span><br><span class="line"><span class="comment">//jsp文件所在位置的前缀</span></span><br><span class="line">spring.mvc.view.prefix=/WEB-INF/jsp/</span><br><span class="line"><span class="comment">//jsp文件的后缀名</span></span><br><span class="line">spring.mvc.view.suffix=.jsp</span><br></pre></td></tr></table></figure>
+<h3 id="2、整合frteemarker"><a href="#2、整合frteemarker" class="headerlink" title="2、整合frteemarker"></a>2、整合frteemarker</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//引入freemarker的依赖</span></span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-freemarker&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">    </span><br><span class="line"><span class="comment">//在application.properties中添加配置</span></span><br><span class="line"><span class="comment">//配置freemarker文件所在的位置（该位置为默认位置，可以不添加配置，如果位置发生变化，进行修改）</span></span><br><span class="line">spring.freemarker.template-loader-path=classpath:/templates/</span><br><span class="line"><span class="comment">//配置freemarker的后缀</span></span><br><span class="line">spring.freemarker.suffix=.ftl    </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="3、整合Thymeleaf"><a href="#3、整合Thymeleaf" class="headerlink" title="3、整合Thymeleaf"></a>3、整合Thymeleaf</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//引入Thymeleaf的依赖</span></span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>src/main/templates：是视图存放的路径（Thymeleaf和freemarker），该目录是安全的，外界无法直接访问到该目录下的文件。</strong></p>
+</blockquote>
+<h4 id="Thymeleaf的语法讲解"><a href="#Thymeleaf的语法讲解" class="headerlink" title="Thymeleaf的语法讲解"></a>Thymeleaf的语法讲解</h4><blockquote>
+<p><strong>th:text</strong>=&gt; 在页面中输出值</p>
+</blockquote>
+<blockquote>
+<p><strong>th:value</strong>=&gt; input中value的值</p>
+</blockquote>
+<p><strong>Thymeleaf的内置对象</strong></p>
+<p>​    调用内置对象一定要用#，大部分内置对象都以s结尾（strings、numbers、dates）</p>
+<p><strong>字符串处理</strong></p>
+<blockquote>
+<p><strong>${ #strings.isEmpty( key ) }</strong>=&gt; 判断字符串是否为空。</p>
+</blockquote>
+<blockquote>
+<p><strong>${ #strings.contains( str, ‘a’ ) }</strong>=&gt; 判断字符串str是否包含 “a”。</p>
+</blockquote>
+<blockquote>
+<p><strong>${ #strings.startsWith( str, ‘a’ ) }</strong>=&gt; 判断字符串str是否以 “a”开头。 </p>
+<p><strong>${ #strings.endsWith( str, ‘a’ ) }</strong>=&gt; 判断字符串str是否以 “a”结尾。 </p>
+</blockquote>
+<blockquote>
+<p><strong>${ #strings.length( str ) }</strong>=&gt; 字符串str的长度。 </p>
+</blockquote>
+<blockquote>
+<p><strong>${ #strings.indexOf( str, ‘a’ ) }</strong>=&gt; 查找字符串str中“a”的位置。 </p>
+</blockquote>
+<blockquote>
+<p><strong>${ #strings.substring( str ) }</strong>=&gt; 字符串str的字符串截取。 </p>
+</blockquote>
+<p><strong>日期格式化处理</strong></p>
+<blockquote>
+<p>**${ #dates.format(key)} **=&gt; 以浏览器默认的语言为格式进行转化</p>
+<p>**${ #dates.format(key，’yyyy-MM-dd’)} **=&gt; 指定日期格式</p>
+<p>**${ #dates.year(key)} **=&gt; 获取年</p>
+<p>**${ #dates.month(key)} **=&gt; 获取月</p>
+<p>**${ #dates.day(key)} **=&gt; 获取日</p>
+</blockquote>
+<p><strong>条件判断</strong></p>
+<blockquote>
+<p><strong>th:if</strong>=&gt; 单条件判断</p>
+<p><strong>th:switch</strong>=&gt; 多条件判断（java中的switch + case）</p>
+</blockquote>
+<p><strong>集合遍历</strong></p>
+<blockquote>
+<p><strong>th:each</strong>=&gt; 遍历集合对象</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&lt;th th:each=<span class="string">&quot;u,var : $&#123;list&#125;&quot;</span>&gt;</span><br><span class="line">  &lt;td th:text=&quot;$&#123;u.name&#125;&quot;&gt;&lt;/td&gt;  </span><br><span class="line">  &lt;td th:text=&quot;$&#123;u.age&#125;&quot;&gt;&lt;/td&gt;  </span><br><span class="line">  &lt;td th:text=&quot;$&#123;u.sex&#125;&quot;&gt;&lt;/td&gt;  </span><br><span class="line">  &lt;td th:text=&quot;$&#123;var.index&#125;&quot;&gt;&lt;/td&gt;  //迭代对象的索引，0开始</span><br><span class="line">  &lt;td th:text=&quot;$&#123;var.count&#125;&quot;&gt;&lt;/td&gt;  //迭代对象的计数器，1开始</span><br><span class="line">  &lt;td th:text=&quot;$&#123;var.size&#125;&quot;&gt;&lt;/td&gt;  	//迭代对象的长度</span><br><span class="line">  &lt;td th:text=&quot;$&#123;var.even&#125;&quot;&gt;&lt;/td&gt;  	//当前行是偶数</span><br><span class="line">  &lt;td th:text=&quot;$&#123;var.odd&#125;&quot;&gt;&lt;/td&gt;  	//当前行是奇数</span><br><span class="line">  &lt;td th:text=&quot;$&#123;var.first&#125;&quot;&gt;&lt;/td&gt;  //当前数据是否是第一个</span><br><span class="line">  &lt;td th:text=&quot;$&#123;var.last&#125;&quot;&gt;&lt;/td&gt;   //当前数据是否是最后一个</span><br><span class="line">&lt;/th&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>th:each</strong>=&gt; 遍历map（此时下面的list在controller中返回的值为map）</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&lt;th th:each=<span class="string">&quot;u : $&#123;list&#125;&quot;</span>&gt;</span><br><span class="line">    &lt;td th:each=&quot;map : $&#123;u&#125;&quot; th:text=&quot;$&#123;map.key&#125;&quot;&gt;&lt;/td&gt;</span><br><span class="line">    &lt;td th:each=&quot;map : $&#123;u&#125;&quot; th:text=&quot;$&#123;map.value.name&#125;&quot;&gt;&lt;/td&gt;</span><br><span class="line">    &lt;td th:each=&quot;map : $&#123;u&#125;&quot; th:text=&quot;$&#123;map.value.age&#125;&quot;&gt;&lt;/td&gt;</span><br><span class="line">    &lt;td th:each=&quot;map : $&#123;u&#125;&quot; th:text=&quot;$&#123;map.value.sex&#125;&quot;&gt;&lt;/td&gt;</span><br><span class="line">&lt;/th&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>域对象操作</strong></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//赋值</span></span><br><span class="line">request.setAttribute(<span class="string">&quot;name&quot;</span>,<span class="string">&quot;zhangsan&quot;</span>);</span><br><span class="line">reuqest.getSession().setAttribute(<span class="string">&quot;age&quot;</span>,<span class="string">&quot;20&quot;</span>);</span><br><span class="line">request.getSession().getServletContext().setAttribute(<span class="string">&quot;sex&quot;</span>,<span class="string">&quot;man&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取request</span></span><br><span class="line">th:text=<span class="string">&quot;$&#123;#httpServletRequest.getAttribute(&#x27;name&#x27;)&#125;&quot;</span></span><br><span class="line">th:text=<span class="string">&quot;$&#123;session.age&#125;&quot;</span></span><br><span class="line">th:text=<span class="string">&quot;$&#123;application.sex&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+<p><strong>URL表达式</strong></p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line"><span class="comment">//绝对地址</span></span><br><span class="line">&lt;a th:href=&quot;@&#123;www.baidu.com&#125;&quot;&gt;绝对地址&lt;/a&gt;</span><br><span class="line"><span class="comment">//相对地址,相对项目的上下文的相对路径</span></span><br><span class="line">&lt;a th:href=&quot;@&#123;/index&#125;&quot;&gt;相对项目的上下文路径&lt;/a&gt;</span><br><span class="line"><span class="comment">//相对于服务器的根</span></span><br><span class="line">&lt;a th:href=&quot;@&#123;~/index&#125;&quot;&gt;相对服务器的根路径&lt;/a&gt;</span><br><span class="line"><span class="comment">//传参    </span></span><br><span class="line">&lt;a th:href=&quot;@&#123;/index(id=1,name=张三)&#125;&quot;&gt;传参&lt;/a&gt;</span><br><span class="line"><span class="comment">//使用restful传参    </span></span><br><span class="line">&lt;a th:href=&quot;@&#123;/index/&#123;id&#125;/user(age=15,name=张三)&#125;&quot;&gt;传参&lt;/a&gt;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="3、整合持久层技术"><a href="#3、整合持久层技术" class="headerlink" title="3、整合持久层技术"></a>3、整合持久层技术</h2><h1 id="地-址：https-github-com-wuyouzhuguli-SpringAll"><a href="#地-址：https-github-com-wuyouzhuguli-SpringAll" class="headerlink" title="地 址：https://github.com/wuyouzhuguli/SpringAll"></a>地 址：<a href="https://github.com/wuyouzhuguli/SpringAll">https://github.com/wuyouzhuguli/SpringAll</a></h1>]]></content>
+  </entry>
+</search>
