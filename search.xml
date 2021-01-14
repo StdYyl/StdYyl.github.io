@@ -161,10 +161,10 @@
   <entry>
     <title>计算机网络</title>
     <url>/2021/01/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</url>
-    <content><![CDATA[<p>​        重新学习计算机网络，包括OSI的七层：应用层、表示层、会话层、传输层、网络层、数据链路层和物理层，以及一些重要的通信协议。</p>
+    <content><![CDATA[<p>重新学习计算机网络，包括OSI的七层：应用层、表示层、会话层、传输层、网络层、数据链路层和物理层，以及一些重要的通信协议。</p>
 <a id="more"></a>
 
-<h3 id="1、应用层"><a href="#1、应用层" class="headerlink" title="1、应用层"></a>1、应用层</h3><p>应用层协议是指应用进程（进程：主机中正在运行的程序）间的通信和交互的规则。应用层交互的数据单元称为报</p>
+<h3 id="1、应用层"><a href="#1、应用层" class="headerlink" title="1、应用层"></a>1、应用层</h3><p>应用层协议是指应用进程（进程：主机中正在运行的程序）间的通信和交互的规则。应用层交互的数据单元称为报。</p>
 <h3 id="2、表示层"><a href="#2、表示层" class="headerlink" title="2、表示层"></a>2、表示层</h3><p>表示层的功能就是当电脑从网卡收到一串数据时，<strong>将这些二进制格式的数据转换成我们能识别的数据</strong>。</p>
 <p>表示层的基本作用就是对<strong>数据格式进行编译</strong>，对收到或发出的数据根据应用层的特征进行处理。表示层能为应用程序提供<strong>特殊的数据处理功能</strong>。表示层提供数据的压缩、解压、加密等服务，为应用层提供语法选择，语法转换。</p>
 <p>例：A电脑用浏览器浏览网站B，在网站B里有一张gif图片，但是B电脑无法识别gif格式的图片，于是在A电脑的浏览器里应该显示这张gif图片的地方会显示为叉叉。</p>
@@ -192,9 +192,12 @@
 </blockquote>
 <h4 id="http"><a href="#http" class="headerlink" title="http"></a><a href="https://shimo.im/docs/RKAWVaYWyQs8XGk8/read">http</a></h4><figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">  http是一个应用层协议，基于TCP协议（传输层）之上，规定WWW服务器。</span><br><span class="line">  浏览器之间信息传递规范。使用默认端口号为80端口，http是默认443。</span><br><span class="line">特点：</span><br><span class="line">  1.简单迅速：客户端向服务器请求服务时，只需传递请求方法和路径。请求方法常用的有GET、HEAD、POST。</span><br><span class="line">  2.灵活：HTTP允许传输任意类型的数据对象。传输的类型由Content-Type加以标记。</span><br><span class="line">  3.无连接：限制每次连接只处理一个请求，服务器处理完请求，收到客户端的应答后，断开连接，为了保持服务端与客户端的服务连接，产生了Cookie和Session。</span><br><span class="line">  4.无状态：无状态是指协议对事物处理没有记忆，后续处理需要前面的信息，则必须重传。</span><br></pre></td></tr></table></figure>
 <h4 id="https"><a href="#https" class="headerlink" title="https"></a>https</h4><p>​    <a href="https://shimo.im/docs/N2A1MEPazZi6YMAD/read">http与https</a></p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
-
-
+<p><strong>浏览器在使用HTTPS传输数据的流程：</strong><br>首先客户端通过URL访问服务器建立SSL连接。服务端收到客户端请求后，会将网站支持的<strong>证书信息（证书中包含公钥）传送一份给客户端</strong>。客户端的服务器开始协商SSL连接的安全等级，也就是信息加密的等级。客户端的浏览器根据双方同意的安全等级，建立会话秘钥，然后利用网站的<strong>公钥将会话秘钥加密</strong>，并传送给网站。服务器利用自己的私钥解密出会话秘钥，服务器利用会话的秘钥加密与客户端之间的通信。</p>
+<p><img src="https://uploader.shimo.im/f/sVPJku39hey8fP0F.png!thumbnail" alt="img"></p>
+<p><strong>缺点</strong>：HTTPS协议多次握手，导致页面的<strong>加载时间延长近50%**；HTTPS连接缓存不如HTTP高效，会增加数据开销和功耗；申请SSL证书需要钱，功能越强大的证书费用越高。SSL涉及到的安全算法会消耗CPU资源，</strong>对服务器资源消耗较大**。</p>
+<h4 id="http与https的区别"><a href="#http与https的区别" class="headerlink" title="http与https的区别"></a>http与https的区别</h4><p>HTTPS是HTTP协议的安全版本，HTTP协议的数据传输是明文的，不是安全的，HTTPS使用了SSL/TLS协议进行加密处理。HTTP和HTTPS使用连接方式不同（长）</p>
+<h4 id="URI和URL"><a href="#URI和URL" class="headerlink" title="URI和URL"></a>URI和URL</h4><p>HTTP使用统一资源标识符（Uniform Resource Identifiers，URI）来传输数据和建立连接。</p>
+<p>简单来说，我们可以通过URI知道一个资源是什么（类型：图片，文件）。通过URL知道一个资源的具体位置，它就是用来定位具体的资源，互联网上的每个文件都有一个唯一的URL。</p>
 <h3 id="4、传输层"><a href="#4、传输层" class="headerlink" title="4、传输层"></a>4、传输层</h3><p>传输层的主要任务就是负责向两台主机进程之间的通信提供通用的数据传输服务。为会话层提供可靠的、无误的数据传输。</p>
 <blockquote>
 <p><strong>常见的网络协议：</strong><code>TCP（Transmission Control Protocol）</code>、<code>UDP</code></p>
@@ -329,28 +332,35 @@
 <li><p>动态、私有：49152~65335</p>
   <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">netstat -ano <span class="comment">#查看所有的端口</span></span><br><span class="line">netstat -ano|findstr <span class="string">&quot;5900&quot;</span> <span class="comment">#查看指定的端口</span></span><br><span class="line">tasklist|findstr <span class="string">&quot;8696&quot;</span> <span class="comment">#查看指定端口的进程</span></span><br></pre></td></tr></table></figure>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </li>
 </ul>
 </li>
 </ul>
-<p>是</p>
+<h3 id="对称加密和非对称加密（重点）"><a href="#对称加密和非对称加密（重点）" class="headerlink" title="对称加密和非对称加密（重点）"></a><a href="https://shimo.im/docs/47kgJ2Dx2EI6nDqV/read">对称加密和非对称加密</a>（重点）</h3><h4 id="1-对称加密"><a href="#1-对称加密" class="headerlink" title="1.对称加密"></a>1.对称加密</h4><p>使用同一个密钥对信息进行加密和解密，这种解密方式成为对称加密，也成为了单密钥加密，常见的对称加密有:DES,AES等。</p>
+<p>通俗来说就是说<strong>加密解密用同一个密钥</strong>。</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">encode(明文,密钥) = 密文   //加密</span><br><span class="line">decode(密文,密钥) = 明文   //解密</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>缺点：</strong>对称加密虽然避免了明文传输的缺点，但是由于<strong>任何人都能拿到密钥</strong>，所以黑客可以通过秘钥来解开报文。</p>
+</blockquote>
+<h4 id="2-非对称加密"><a href="#2-非对称加密" class="headerlink" title="2.非对称加密"></a>2.非对称加密</h4><p>非对称加密使用公钥和私钥的方式进行加密解密，常见的非对称加密算法有：RSA，DSA等。</p>
+<p>通俗来讲，如果使用公钥加密，就必须使用私钥才能解密；如果使用私钥加密，则必须使用公钥解密。</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">//公钥加密，私钥解密</span><br><span class="line">encode(明文,公钥) = 密文</span><br><span class="line">decode(密文,私钥) = 明文</span><br><span class="line">//私钥加密，公钥解密</span><br><span class="line">encode(明文,私钥) = 密文</span><br><span class="line">decode(密文,公钥) = 明文</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>缺点</strong>：使用非对称加密的话，虽然客户端发送给服务可以解开（因为公钥公开，私钥只有服务器有，客户端使用公钥加密，服务器用私钥解密即可），但是服务器如果使用<strong>私钥加密</strong>，那么<strong>黑客也可以解开这个报文</strong>；如果使用<strong>公钥加密</strong>，那么<strong>客户端和黑客都解不开报文</strong>。</p>
+</blockquote>
+<h4 id="3-对称加密-非对称加密"><a href="#3-对称加密-非对称加密" class="headerlink" title="3.对称加密+非对称加密"></a>3.对称加密+非对称加密</h4><ol>
+<li>客户端生成一个随机的对称加密秘钥ky。</li>
+<li>使用非对称加密算法，使用公钥对ky进行加密得到kys。</li>
+<li>客户端将kys发送至服务器，服务器使用私钥进行解密，得到ky。</li>
+<li>客户端和服务器使用ky对报文加密解密进行传输。</li>
+</ol>
+<h4 id="4-中间人拦截（黑客使用自己的公钥和私钥，充当服务器和客户端之间的中间人）"><a href="#4-中间人拦截（黑客使用自己的公钥和私钥，充当服务器和客户端之间的中间人）" class="headerlink" title="4.中间人拦截（黑客使用自己的公钥和私钥，充当服务器和客户端之间的中间人）"></a>4.中间人拦截（<strong>黑客使用自己的公钥和私钥，充当服务器和客户端之间的中间人</strong>）</h4><p>中间人拦截就是客户端首次向服务器索要公钥时，黑客（中间人）将<strong>自己的公钥发送给客户端</strong>。接下来，当客户端使用对称加密+非对称加密的方式进行报文传输时，黑客就可以肆意获取到报文的内容了。</p>
+<blockquote>
+<p><strong>问题原因：</strong>客户端无法确认服务端公钥的正确性！</p>
+</blockquote>
+<h4 id="5-CA-非对称加密-对称加密"><a href="#5-CA-非对称加密-对称加密" class="headerlink" title="5.CA+非对称加密+对称加密"></a>5.CA+非对称加密+对称加密</h4><p>为解决中间人拦截的问题，引入了一个叫CA的机构，这个机构使用的也是非对称加密的方式，拥有自己的公钥和私钥，我们暂且称之为cpk，csk。</p>
+<p>服务端会向CA机构申请一个证书。CA机构会根据服务端提供的公钥pk，用自己的私钥csk对此公钥进行加密，得到证书。（其中证书中还包括了其他信息如：域名，有效日期，颁发机构等）。</p>
+<p>接着客户端回响CA机构申请公钥cpk来揭秘证书。（因为申请CA公钥这个过程也可以被黑客拦截，所以<strong>CA机构是内置在操作系统中的</strong>（浏览器？？？）！所以这个过程不可能被拦截，一样从根本上解决问题）。</p>
 ]]></content>
       <categories>
         <category>网络通信</category>
